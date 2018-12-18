@@ -12,6 +12,7 @@ import android.net.wifi.rtt.RangingRequest
 import android.net.wifi.rtt.RangingResult
 import android.net.wifi.rtt.RangingResultCallback
 import android.net.wifi.rtt.WifiRttManager
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.ArrayAdapter
@@ -74,21 +75,20 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     fun startRangingRequest(pointList: ArrayList<ScanResult>) {
-        val req: RangingRequest = RangingRequest.Builder().run {
+
+        val request: RangingRequest = RangingRequest.Builder().run {
             for (item: ScanResult in pointList) {
                 addAccessPoint(item)
             }
             build()
         }
+
         val mgr = getSystemService(Context.WIFI_RTT_RANGING_SERVICE) as WifiRttManager
-        val request: RangingRequest = req
-
-        mgr.startRanging(request, executor, object : RangingResultCallback() {
+        mgr.startRanging(request, AsyncTask.THREAD_POOL_EXECUTOR, object : RangingResultCallback() {
             override fun onRangingResults(results: List<RangingResult>) {
-
             }
-            override fun onRangingFailure(code: Int) {
 
+            override fun onRangingFailure(code: Int) {
             }
         })
     }
